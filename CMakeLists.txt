@@ -64,24 +64,23 @@ file(GLOB cryptopp_SOURCES_TEST bench.cpp bench2.cpp test.cpp validat1.cpp valid
 # Library sources
 file(GLOB cryptopp_SOURCES *.cpp)
 list(REMOVE_ITEM cryptopp_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/cryptlib.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/cpu.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/pch.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/simple.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/winpipes.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/cryptlib_bds.cpp
-		${cryptopp_SOURCES_TEST}
+	${CMAKE_CURRENT_SOURCE_DIR}/cryptlib_bds.cpp
+	${cryptopp_SOURCES_TEST}
+	)
+		
+if( MSVC)
+	enable_language(ASM_MASM)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		add_definitions(/D_M_X64)
+	else()
+		add_definitions(/D_M_X86)
+	endif()
+	
+	list(APPEND cryptopp_SOURCES
+		${CMAKE_CURRENT_SOURCE_DIR}/rdrand.asm
 		)
-set(cryptopp_SOURCES
-		${CMAKE_CURRENT_SOURCE_DIR}/cryptlib.cpp
-		${CMAKE_CURRENT_SOURCE_DIR}/cpu.cpp
-		${cryptopp_SOURCES}
-		)
-
-if(MINGW)
-	list(APPEND cryptopp_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/winpipes.cpp)
+	set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/rdrand.asm PROPERTIES COMPILE_FLAGS "-safeseh")
 endif()
-
 #============================================================================
 # Compile targets
 #============================================================================
