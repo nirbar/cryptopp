@@ -69,6 +69,14 @@ list(REMOVE_ITEM cryptopp_SOURCES
 	)
 		
 if( MSVC)
+	FOREACH(flag_var
+			CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+			CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+		IF(${flag_var} MATCHES "/MD")
+			STRING(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+		ENDIF(${flag_var} MATCHES "/MD")
+	ENDFOREACH(flag_var)
+
 	enable_language(ASM_MASM)
 	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 		add_definitions(/D_M_X64)
